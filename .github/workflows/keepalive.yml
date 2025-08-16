@@ -1,0 +1,14 @@
+name: Keep Render Service Awake
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"       # 每 10 分鐘執行一次
+  workflow_dispatch:            # 可以手動觸發
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render Service
+        run: |
+          curl -fsS https://talk-2-noty.onrender.com/ >/dev/null || true
