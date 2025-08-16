@@ -2,8 +2,8 @@ name: Keep Render Service Awake
 
 on:
   schedule:
-    - cron: "*/10 * * * *"       # 每 10 分鐘執行一次
-  workflow_dispatch:            # 可以手動觸發
+    - cron: "*/40 * * * *"   # 每 40 分鐘執行
+  workflow_dispatch:         # 允許手動執行
 
 jobs:
   keepalive:
@@ -11,4 +11,17 @@ jobs:
     steps:
       - name: Ping Render Service
         run: |
-          curl -fsS https://talk-2-noty.onrender.com/ >/dev/null || true
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://你的服務網址)
+          echo "Service status: $STATUS"
+          if [ "$STATUS" = "200" ]; then
+            echo "✅ Service already running, skip restart."
+            exit 0
+          else
+            echo "⚠️ Service not responding, forcing restart..."
+          fi
+
+      - name: Restart Render Service
+        run: |
+          curl -X POST "https://api.render.com/v1/services/<SERVICE_ID>/deploys" \
+          -H "Accept: application/json" \
+          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}"
