@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Ping Render Service
         run: |
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://你的服務網址)
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://talk-2-noty.onrender.com)
           echo "Service status: $STATUS"
           if [ "$STATUS" = "200" ]; then
             echo "✅ Service already running, skip restart."
